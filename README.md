@@ -1,7 +1,7 @@
 # PlainTerms — understand any document, privately
 
 **Live demo:** https://plainterms-326cd.web.app
-**Demo video:** <URL — fill after upload>
+**Demo video:** https://youtu.be/Tg6tFJEdBYA
 
 I built PlainTerms because the documents that matter most in everyday life —
 a lease, an insurance denial letter, a gym contract, a loan agreement — are
