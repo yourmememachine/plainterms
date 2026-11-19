@@ -1,0 +1,40 @@
+name: Deploy to Firebase
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm test
+
+      - name: Build
+        run: npm run build
+        env:
+          VITE_FIREBASE_API_KEY: AIzaSyA3Yd34g5YIowRFMEeVGW3mEFkZUMHcI24
+          VITE_FIREBASE_AUTH_DOMAIN: plainterms-326cd.firebaseapp.com
+          VITE_FIREBASE_PROJECT_ID: plainterms-326cd
+          VITE_FIREBASE_STORAGE_BUCKET: plainterms-326cd.firebasestorage.app
+          VITE_FIREBASE_MESSAGING_SENDER_ID: "708696782517"
+          VITE_FIREBASE_APP_ID: 1:708696782517:web:242d0e7eaf94b5521cb0fc
+          VITE_APPCHECK_SITE_KEY: 6LcLmScuAAAAAMX2rnEjq6NnFJgxtHelETlx7QMZ
+
+      - name: Write service account key
+        run: printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$RUNNER_TEMP/firebase-sa.json"
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PLAINTERMS }}
+
+      - name: Deploy hosting and Firestore rules
+        run: npx -y firebase-tools@13 deploy --only hosting,firestore:rules --project plainterms-326cd --non-interactive
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/firebase-sa.json
