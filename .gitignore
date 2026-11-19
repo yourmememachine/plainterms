@@ -8,3 +8,7 @@ dist/
 firebase-debug.log
 firestore-debug.log
 ui-debug.log
+
+# Demo production working files (kept local only)
+demo-work/
+demo-video.mp4
