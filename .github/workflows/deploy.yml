@@ -6,6 +6,9 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v4
 
@@ -29,12 +32,11 @@ jobs:
           VITE_FIREBASE_APP_ID: 1:708696782517:web:242d0e7eaf94b5521cb0fc
           VITE_APPCHECK_SITE_KEY: 6LcLmScuAAAAAMX2rnEjq6NnFJgxtHelETlx7QMZ
 
-      - name: Write service account key
-        run: printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$RUNNER_TEMP/firebase-sa.json"
-        env:
-          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PLAINTERMS }}
+      - name: Authenticate to Google Cloud (keyless)
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/708696782517/locations/global/workloadIdentityPools/github-pool/providers/github-provider
+          service_account: github-actions-deploy@plainterms-326cd.iam.gserviceaccount.com
 
       - name: Deploy hosting and Firestore rules
         run: npx -y firebase-tools@13 deploy --only hosting,firestore:rules --project plainterms-326cd --non-interactive
-        env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/firebase-sa.json
