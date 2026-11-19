@@ -42,7 +42,7 @@ describe("mergeSettings", () => {
   });
 
   it("trims and accepts a model name", () => {
-    expect(mergeSettings({ cloudModel: " gemini-2.5-flash " }).cloudModel).toBe("gemini-2.5-flash");
+    expect(mergeSettings({ cloudModel: " gemini-3.8-flash " }).cloudModel).toBe("gemini-3.8-flash");
   });
 });
 

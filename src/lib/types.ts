@@ -26,7 +26,7 @@ export interface RoutingSettings {
 
 export const DEFAULT_SETTINGS: RoutingSettings = {
   maxOnDeviceChars: 1200,
-  cloudModel: "gemini-2.5-flash",
+  cloudModel: "gemini-3.8-flash",
 };
 
 /** Chrome Prompt API availability states for the on-device model. */
