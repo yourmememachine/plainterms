@@ -1,6 +1,6 @@
 # PlainTerms — understand any document, privately
 
-**Live demo:** <URL — fill after deploy>
+**Live demo:** https://plainterms-326cd.web.app
 **Demo video:** <URL — fill after upload>
 
 I built PlainTerms because the documents that matter most in everyday life —
