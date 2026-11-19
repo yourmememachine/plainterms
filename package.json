@@ -1,0 +1,25 @@
+{
+  "name": "plainterms",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PlainTerms \u2014 understand any document, privately. Hybrid on-device + cloud AI explanations of leases, letters, and contracts, built on Firebase AI Logic.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "deploy": "npm run build && firebase deploy --only hosting,firestore:rules"
+  },
+  "dependencies": {
+    "firebase": "^12.5.0",
+    "pdfjs-dist": "^6.5.438"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vite": "^6.0.7",
+    "vitest": "^2.1.5"
+  }
+}

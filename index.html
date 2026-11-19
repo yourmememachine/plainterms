@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PlainTerms — understand any document, privately</title>
+    <meta
+      name="description"
+      content="PlainTerms explains leases, letters, and contracts in plain English. Short passages run on-device in Chrome; whole-document briefs use the cloud. Built on Firebase AI Logic hybrid inference."
+    />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📄</text></svg>" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="topbar">
+        <div class="brand">
+          <span class="logo" aria-hidden="true">📄</span>
+          <div>
+            <h1>PlainTerms</h1>
+            <p class="tagline">Understand any document, privately.</p>
+          </div>
+        </div>
+        <div class="status" id="status-chips" aria-label="Service status"></div>
+      </header>
+
+      <main class="layout">
+        <section class="col doc-col" aria-label="Document">
+          <div class="card">
+            <div class="card-head">
+              <h2>Your document</h2>
+              <div class="doc-actions">
+                <select id="sample-select" aria-label="Load a sample document">
+                  <option value="">Try a sample…</option>
+                </select>
+                <label class="btn btn-ghost" for="file-input">Open file</label>
+                <input id="file-input" type="file" accept=".txt,.md,.pdf" hidden />
+                <button id="clear-doc" class="btn btn-ghost" type="button">Clear</button>
+              </div>
+            </div>
+            <textarea
+              id="doc-input"
+              rows="12"
+              placeholder="Paste a lease, a letter, terms of service, an insurance notice — anything you need explained in plain English. Nothing leaves your device until you ask for a cloud brief."
+              aria-label="Document text"
+            ></textarea>
+            <p class="hint" id="doc-stats">0 characters · 0 sentences</p>
+            <p class="hint">Files: .txt, .md, or PDF. PDF text is extracted on this device; scanned image-only PDFs have no text to extract.</p>
+            <div class="toggles">
+              <label class="toggle">
+                <input type="checkbox" id="privacy-mode" />
+                <span>Privacy mode — keep everything on this device</span>
+              </label>
+              <label class="toggle">
+                <input type="checkbox" id="offline-sim" />
+                <span>Simulate offline — show what happens with no connection</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <h2>Clauses</h2>
+              <button id="explain-clause" class="btn btn-primary" type="button">Explain selected clause</button>
+            </div>
+            <div id="chunk-list" class="chunk-list" role="listbox" aria-label="Document clauses">
+              <p class="empty">Paste a document or load a sample to see its clauses here.</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h2>Ask about the document</h2></div>
+            <div class="ask-row">
+              <input
+                id="question-input"
+                type="text"
+                placeholder="e.g. When can the landlord raise my rent?"
+                aria-label="Your question about the document"
+              />
+              <button id="ask-btn" class="btn btn-primary" type="button">Ask</button>
+            </div>
+            <p class="hint" id="ask-hint">Asking searches the most relevant passage and routes on its size — short passages run on-device when the model is available.</p>
+          </div>
+        </section>
+
+        <section class="col result-col" aria-label="Results">
+          <div class="card result-card">
+            <div class="card-head">
+              <h2>Plain-language answer</h2>
+              <span id="result-source" class="badge badge-idle">No answer yet</span>
+            </div>
+            <div class="result-actions">
+              <button id="brief-btn" class="btn btn-primary" type="button">Full document brief</button>
+              <button id="flags-btn" class="btn btn-secondary" type="button">Red-flag scan</button>
+            </div>
+            <div id="result-body" class="result-body">
+              <p class="empty">
+                Choose a clause and explain it, or ask for a full brief. Every answer shows
+                where it ran — on your device, in the cloud, or locally — and why.
+              </p>
+            </div>
+            <p id="prime-progress" class="hint" hidden></p>
+            <p id="result-meta" class="hint"></p>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h2>Red flags</h2></div>
+            <div id="flags-body" class="flags-body">
+              <p class="empty">Run the red-flag scan for a fast pattern check over the whole document.</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h2>Where did it run?</h2></div>
+            <ol id="ledger" class="ledger">
+              <li class="empty">Nothing yet. Each answer is logged here with its route and time.</li>
+            </ol>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h2>History</h2></div>
+            <ul id="history-list" class="history">
+              <li class="empty">No saved analyses yet.</li>
+            </ul>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <p>
+          PlainTerms explains documents using Firebase AI Logic hybrid inference:
+          short passages on your device (Gemini Nano in Chrome), whole-document
+          briefs in the cloud (Gemini). Privacy mode pins everything on-device.
+          This is general information, not legal advice.
+        </p>
+      </footer>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

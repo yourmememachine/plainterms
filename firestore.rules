@@ -1,0 +1,14 @@
+rules_version = '2';
+
+// PlainTerms stores per-user analysis history. A signed-in (anonymous is fine)
+// user can only read and write their own documents.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{uid}/analyses/{analysisId} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
