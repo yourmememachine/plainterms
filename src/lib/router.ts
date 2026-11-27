@@ -101,7 +101,11 @@ export function routeRequest(input: RouteInput): RoutingDecision {
     return {
       ...base,
       mode: "PREFER_ON_DEVICE",
-      expectLocalFallback: !deviceReady,
+      // Not "expect local" even when the device model is not ready: the
+      // hybrid SDK itself falls back to the cloud in that case, so the
+      // model must still be attempted. The local engine only covers an
+      // actual model failure (handled in the service layer).
+      expectLocalFallback: false,
       reason: deviceReady
         ? "Short passage: answered on your device when the model is ready, with the cloud as fallback. The result badge shows where it actually ran."
         : "Short passage, but the on-device model is not ready, so the cloud answers (the local engine covers a cloud failure).",

@@ -104,4 +104,11 @@ describe("routeRequest", () => {
     const d = routeRequest(base({ task: "ask-document", sourceChars: 280 }));
     expect(d.mode).toBe("PREFER_ON_DEVICE");
   });
+
+  it("short passage with cloud usable but no ready device model still attempts the model (cloud fallback)", () => {
+    const d = routeRequest(base({ env: env({ onDevice: "unavailable" }) }));
+    expect(d.mode).toBe("PREFER_ON_DEVICE");
+    expect(d.expectLocalFallback).toBe(false);
+    expect(d.reason).toContain("the cloud answers");
+  });
 });

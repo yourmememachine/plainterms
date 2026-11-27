@@ -102,7 +102,7 @@ You need Node 20+ and Chrome 139+ desktop for on-device inference.
 ```bash
 npm install
 npm run dev        # http://127.0.0.1:5173
-npm test           # 70 unit tests: routing, orchestration, providers, scan, engine, stores
+npm test           # 71 unit tests: routing, orchestration, providers, scan, engine, stores
 npm run build      # type-check + production build to dist/
 ```
 
@@ -161,7 +161,7 @@ src/
       hybridProvider.ts    Firebase AI Logic hybrid inference
       localProvider.ts     Local engine behind the same interface
       service.ts           Orchestration: model first, degrade honestly
-test/                      Vitest suite (70 tests)
+test/                      Vitest suite (71 tests)
 firestore.rules            Owner-only history access
 firebase.json              Hosting / Firestore / emulator configuration
 ```
@@ -181,9 +181,9 @@ firebase.json              Hosting / Firestore / emulator configuration
 
 - Deloitte, *Global Mobile Consumer Survey: US Edition* (2017) — 91% accept
   terms without reading; 97% for ages 18–34.
-- Citizens Advice (England) — one in three renters signed a tenancy
-  agreement without fully understanding it; 51% were shown the agreement
-  only after putting down money.
+- Citizens Advice (England), *Rental Roulette* (October 2018) — one in
+  three renters signed a tenancy agreement without fully understanding it;
+  51% were shown the agreement only after putting down money.
 
 ## Notes and limits
 
