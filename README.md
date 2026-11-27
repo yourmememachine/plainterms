@@ -183,7 +183,7 @@ src/
       hybridProvider.ts    Firebase AI Logic hybrid inference
       localProvider.ts     Local engine behind the same interface
       service.ts           Orchestration: model first, degrade honestly
-test/                      Vitest suite (98 tests)
+test/                      Vitest suite (99 tests)
 firestore.rules            Owner-only history access
 firebase.json              Hosting / Firestore / emulator configuration
 ```
@@ -194,6 +194,9 @@ firebase.json              Hosting / Firestore / emulator configuration
   README to its proof — fresh-profile first-run results, the privacy
   regression test, the red-flag bench, and a live cross-user Firestore
   check.
+- **Accuracy benchmark:** [BENCHMARK.md](BENCHMARK.md) — 23 clause
+  scenarios run against the app's deterministic paths, failures
+  included.
 - The hosted build runs against a real Firebase project: load it, explain a
   clause (badge: *Ran on your device* in Chrome 139+ with the built-in model
   ready; otherwise *Ran in the cloud*), then run a full brief (cloud) and

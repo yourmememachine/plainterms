@@ -63,14 +63,65 @@ the proof a reviewer can check. Verified 2026-11-27 against the live app
   are spelled out in the README and in the app itself, above the
   document box, before anything is run.
 
+## On-device capture attempt (2026-11-27) — blocked by the machine, documented
+
+A deliberate attempt was made to capture a genuine `ON_DEVICE`
+invocation (badge "Ran on your device") from the deployed build, using
+Google Chrome for Testing 157.0.8103.50 on this Linux x86_64 VM (no
+physical GPU). Three launch configurations were tried against the live
+app, polling `LanguageModel.availability()` for ~2 minutes each:
+
+- **A — feature flags on** (`OptimizationGuideOnDeviceModel`,
+  `PromptApiForGeminiNano`; SwiftShader WebGL): the Prompt API exists,
+  `availability()` returned **"unavailable"** on every poll; WebGPU
+  exposed **no adapter**.
+- **B — A plus the performance-requirement bypass**
+  (`OptimizationGuideOnDeviceModel:BypassPerfRequirement/true`):
+  still **"unavailable"** on every poll.
+- **C — B plus a SwiftShader WebGPU adapter**
+  (`--use-webgpu-adapter=swiftshader`): a WebGPU adapter was then
+  present (`google|swiftshader`, maxBufferSize 1 GiB) — and
+  `availability()` **still** returned **"unavailable"** on every poll.
+
+No on-device model component was ever downloaded (the profiles stayed
+at ~28 MB; no on-device-model component directory appeared), i.e.
+Chrome never reached the "downloadable" state: the eligibility gate
+itself refuses on this hardware — a software-rendered adapter in a
+Linux VM does not satisfy Chrome's device requirements for Gemini
+Nano, and the perf-bypass flag does not override that gate. So no
+ON_DEVICE capture exists, and none is claimed. In every run the app
+behaved as designed: the status chip honestly read "On-device model:
+not available here" and answers degraded to the labelled local engine.
+On a supported machine (a real GPU meeting Chrome's requirements) the
+same build probes "available"/"downloadable" and primes the model on
+the first click — that path is unit-tested (`test/hybridProvider.test.ts`)
+but, as of this writing, not captured live. Closing that gap needs one
+run on supported hardware; it cannot be produced from this VM.
+
+## Accuracy benchmark
+
+[`BENCHMARK.md`](BENCHMARK.md): 23 clause scenarios (renewal,
+termination/notice, indemnity in both directions, rent increase,
+conflicting clauses and dates, ambiguous wording, a missing
+obligation, prompt-injection text inside the document, an
+unanswerable question, exact money/date extraction) run against the
+app's real deterministic paths — final run 23/23 scenarios, 39/39
+checks. The benchmark's first run failed two scenarios; both failures,
+including the real scanner gap it exposed and the fix, are documented
+in BENCHMARK.md itself.
+
 ## Red-flag scan: bench, including negation
 
-- `test/redflags.test.ts` (21 tests): one positive case per rule, benign
+- `test/redflags.test.ts` (22 tests): one positive case per rule, benign
   documents that must stay silent, and negation/exception cases —
   "does not automatically renew", "no early termination fee applies",
   "a cancellation fee will not be charged" — which are reported as
   qualified notes, never as unqualified warnings. A real "shall not be
   liable" waiver is verified NOT to be talked away as a negation.
+- The benchmark above caught one phrasing the rule missed — "with 24
+  hours' notice" — fixed 2026-11-27 with a failing-first test (see
+  BENCHMARK.md). The fix is in this repo; the live site picks it up on
+  the next "Deploy to Firebase" workflow dispatch.
 - The results UI states, in both the empty and populated states, that a
   scan is pattern matching only and is not a safety verdict.
 
@@ -95,6 +146,6 @@ the proof a reviewer can check. Verified 2026-11-27 against the live app
 
 ## Test suite
 
-`npm test` — 98 tests, 9 files: routing, orchestration, providers,
+`npm test` — 99 tests, 9 files: routing, orchestration, providers,
 privacy regression, red-flag bench, stores, config, PDF, text.
 `npm run build` type-checks (`tsc --noEmit`) before bundling.

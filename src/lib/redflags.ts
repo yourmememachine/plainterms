@@ -63,7 +63,7 @@ const RULES: Rule[] = [
   {
     kind: "Short notice window",
     severity: "medium",
-    pattern: /\bwithin (24|48) hours\b|\b(1|2|3|5|7) (calendar |business )?days('|\s)? notice\b/i,
+    pattern: /\bwithin (24|48) hours\b|\b(24|48) hours'? notice\b|\b(1|2|3|5|7) (calendar |business )?days('|\s)? notice\b/i,
     note: "A tight deadline: miss it and you may lose rights or money.",
   },
   {

@@ -27,6 +27,10 @@ describe("scanRedFlags — positive bench (one per rule)", () => {
   it("flags short notice window", () => {
     expect(kinds("Report defects within 48 hours of discovery.")).toContain("Short notice window");
   });
+  it("flags the common '24 hours' notice' phrasing", () => {
+    expect(kinds("The Landlord may enter with 24 hours' notice.")).toContain("Short notice window");
+    expect(kinds("Entry is permitted on 48 hours notice.")).toContain("Short notice window");
+  });
   it("flags deposit / non-refundable money", () => {
     expect(kinds("A security deposit of $500 is required. The deposit is non-refundable.")).toContain("Deposit / non-refundable money");
   });
