@@ -22,8 +22,10 @@ PlainTerms explains documents in plain English, and it is deliberate about
 *where* each piece of work runs:
 
 - **Explaining one clause** or **answering a quick question** runs **on your
-  device** first (Gemini Nano, built into Chrome). It is instant, it works
-  offline, and the text never leaves your machine.
+  device** first (Gemini Nano, built into Chrome). When the device model
+  answers it is instant and the text stays on the machine — and when the
+  device model is not ready, the same passage falls back to the **cloud**
+  model. The badge on every answer says which one actually ran.
 - **A full document brief** — summary, obligations, money, deadlines, traps —
   escalates to the **cloud** (Gemini via Firebase AI Logic), where the larger
   model and context window earn their keep.
@@ -36,6 +38,26 @@ PlainTerms explains documents in plain English, and it is deliberate about
 Every request is logged in an on-screen **inference ledger**: the task, the
 route requested, where it actually ran, and how long it took. The routing is
 the product, so the routing is visible.
+
+## Three levels of privacy
+
+"Private" is not one promise; PlainTerms separates it into three levels and
+labels which one produced every answer:
+
+- **Preferred local (the default).** Short jobs request the on-device model
+  first. If it is not ready, the relevant passage may be sent to the cloud
+  model — that fallback is the hybrid working as designed, and the badge
+  and ledger disclose it. History is saved to your (anonymous) account.
+- **Cloud.** Full document briefs and over-long passages are deliberately
+  sent to the cloud model: whole-document synthesis is what it is for.
+- **Strict privacy (Privacy mode).** Everything is pinned to the device
+  (`ONLY_ON_DEVICE`): no cloud fallback is attempted, and history is kept
+  only in this browser, never written to the cloud. This is the only level
+  where document text never leaves the machine — and if no device model is
+  ready, the built-in local engine answers instead of the cloud. An
+  automated regression test fails the build if a privacy-mode operation
+  ever reaches the cloud provider or the cloud history store
+  (`test/privacy.test.ts`).
 
 **Platform:** Web (Chrome desktop). **Built with:** Firebase AI Logic hybrid
 inference, App Check, Anonymous Authentication, Firestore, Remote Config,
@@ -102,7 +124,7 @@ You need Node 20+ and Chrome 139+ desktop for on-device inference.
 ```bash
 npm install
 npm run dev        # http://127.0.0.1:5173
-npm test           # 71 unit tests: routing, orchestration, providers, scan, engine, stores
+npm test           # 98 unit tests: routing, orchestration, providers, scan, engine, stores
 npm run build      # type-check + production build to dist/
 ```
 
@@ -161,13 +183,17 @@ src/
       hybridProvider.ts    Firebase AI Logic hybrid inference
       localProvider.ts     Local engine behind the same interface
       service.ts           Orchestration: model first, degrade honestly
-test/                      Vitest suite (71 tests)
+test/                      Vitest suite (98 tests)
 firestore.rules            Owner-only history access
 firebase.json              Hosting / Firestore / emulator configuration
 ```
 
 ## For reviewers
 
+- **Evidence map:** [EVIDENCE.md](EVIDENCE.md) ties each claim in this
+  README to its proof — fresh-profile first-run results, the privacy
+  regression test, the red-flag bench, and a live cross-user Firestore
+  check.
 - The hosted build runs against a real Firebase project: load it, explain a
   clause (badge: *Ran on your device* in Chrome 139+ with the built-in model
   ready; otherwise *Ran in the cloud*), then run a full brief (cloud) and

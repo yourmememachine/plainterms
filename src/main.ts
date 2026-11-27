@@ -382,6 +382,11 @@ function renderFlags(): void {
       `<div class="excerpt">${escapeHtml(f.excerpt)}</div>`;
     flagsBody.appendChild(div);
   }
+  const caveat = document.createElement("p");
+  caveat.className = "hint";
+  caveat.textContent =
+    "Pattern matches only — this scan recognises common traps, not every trap. A short list here, or none, is not a safety verdict on the document.";
+  flagsBody.appendChild(caveat);
 }
 
 function escapeHtml(s: string): string {
@@ -481,7 +486,7 @@ function ask(): void {
     return;
   }
   askHint.textContent =
-    "Asking searches the most relevant passage and routes on its size — short passages run on-device when the model is available.";
+    "Asking searches the most relevant passage and routes on its size — short passages run on-device when the model is available, and in the cloud when it is not.";
   const passage = selectPassage(docInput.value, question, settings.maxOnDeviceChars);
   void runTask(
     "ask-document",

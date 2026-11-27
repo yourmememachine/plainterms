@@ -11,6 +11,9 @@ export interface RedFlag {
   severity: FlagSeverity;
   excerpt: string;
   note: string;
+  /** True when the match sits in a negated/exception form ("does not
+   * automatically renew") — the flag is then qualified, not a warning. */
+  negated?: boolean;
 }
 
 interface Rule {
@@ -88,16 +91,52 @@ function excerptAround(text: string, index: number, match: string): string {
   return `${start > 0 ? "…" : ""}${slice}${end < text.length ? "…" : ""}`;
 }
 
+/**
+ * Negation / exception detection. A pattern that appears as "does not
+ * automatically renew" or "no early termination fee applies" must not be
+ * reported as an unqualified warning: the document is ruling the thing
+ * out, not imposing it. Detection is deliberately narrow — a negation cue
+ * in the same sentence, shortly before the match ("no …", "does not …",
+ * "never …"), or a ruling-out phrase shortly after it ("… does not
+ * apply", "… will not be charged"). Anything else keeps the plain
+ * warning, so a real trap is never talked away by a distant "not".
+ */
+const PRE_NEGATION_RE = /\b(no|not|never|n't|free of)\b/i;
+const POST_NEGATION_RE =
+  /\b(does not apply|do not apply|shall not apply|will not apply|not be charged|not charged|is waived|are waived|is excluded|are excluded|not subject to)\b/i;
+
+function sentenceBounds(text: string, index: number, matchLen: number): [number, number] {
+  const isBoundary = (ch: string) => ch === "." || ch === "!" || ch === "?" || ch === "\n";
+  let start = index;
+  while (start > 0 && !isBoundary(text[start - 1])) start -= 1;
+  let end = index + matchLen;
+  while (end < text.length && !isBoundary(text[end])) end += 1;
+  return [start, end];
+}
+
+export function isNegatedMatch(text: string, index: number, match: string): boolean {
+  const [sStart, sEnd] = sentenceBounds(text, index, match.length);
+  const before = text.slice(Math.max(sStart, index - 60), index);
+  if (PRE_NEGATION_RE.test(before)) return true;
+  const after = text.slice(index + match.length, Math.min(sEnd, index + match.length + 60));
+  return POST_NEGATION_RE.test(after);
+}
+
+const NEGATED_NOTE =
+  "Mentioned in a negated or exception form — the document appears to rule this out rather than impose it. Read the exact sentence before relying on either reading.";
+
 export function scanRedFlags(text: string): RedFlag[] {
   const flags: RedFlag[] = [];
   for (const rule of RULES) {
     const m = rule.pattern.exec(text);
     if (m) {
+      const negated = isNegatedMatch(text, m.index, m[0]);
       flags.push({
         kind: rule.kind,
-        severity: rule.severity,
+        severity: negated ? "info" : rule.severity,
         excerpt: excerptAround(text, m.index, m[0]),
-        note: rule.note,
+        note: negated ? NEGATED_NOTE : rule.note,
+        ...(negated ? { negated: true } : {}),
       });
     }
   }
